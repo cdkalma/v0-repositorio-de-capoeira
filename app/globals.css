@@ -4,39 +4,41 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.12 0.01 60);
-  --foreground: oklch(0.95 0.01 80);
-  --card: oklch(0.18 0.015 55);
-  --card-foreground: oklch(0.95 0.01 80);
-  --popover: oklch(0.15 0.01 55);
-  --popover-foreground: oklch(0.95 0.01 80);
-  --primary: oklch(0.65 0.15 55);
-  --primary-foreground: oklch(0.12 0.01 60);
-  --secondary: oklch(0.25 0.02 55);
-  --secondary-foreground: oklch(0.90 0.01 80);
-  --muted: oklch(0.22 0.015 55);
-  --muted-foreground: oklch(0.65 0.02 70);
-  --accent: oklch(0.55 0.12 145);
-  --accent-foreground: oklch(0.95 0.01 80);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.95 0.01 80);
-  --border: oklch(0.30 0.02 55);
-  --input: oklch(0.25 0.02 55);
-  --ring: oklch(0.65 0.15 55);
-  --chart-1: oklch(0.65 0.15 55);
-  --chart-2: oklch(0.55 0.12 145);
-  --chart-3: oklch(0.50 0.10 30);
-  --chart-4: oklch(0.70 0.12 80);
-  --chart-5: oklch(0.60 0.08 200);
+  /* #02141B - Azul oscuro profundo */
+  --background: #02141B;
+  --foreground: #f5f5f0;
+  --card: #0a2530;
+  --card-foreground: #f5f5f0;
+  --popover: #071e28;
+  --popover-foreground: #f5f5f0;
+  /* #AF9A4F - Dorado/Oro */
+  --primary: #AF9A4F;
+  --primary-foreground: #02141B;
+  --secondary: #1a3a4a;
+  --secondary-foreground: #f5f5f0;
+  --muted: #132a38;
+  --muted-foreground: #8a9a9f;
+  --accent: #AF9A4F;
+  --accent-foreground: #02141B;
+  --destructive: #dc2626;
+  --destructive-foreground: #f5f5f0;
+  --border: #1e4050;
+  --input: #1a3a4a;
+  --ring: #AF9A4F;
+  --chart-1: #AF9A4F;
+  --chart-2: #c4b06a;
+  --chart-3: #8a7a3f;
+  --chart-4: #d4c485;
+  --chart-5: #6a5a2f;
   --radius: 0.5rem;
-  --sidebar: oklch(0.10 0.01 60);
-  --sidebar-foreground: oklch(0.95 0.01 80);
-  --sidebar-primary: oklch(0.65 0.15 55);
-  --sidebar-primary-foreground: oklch(0.12 0.01 60);
-  --sidebar-accent: oklch(0.25 0.02 55);
-  --sidebar-accent-foreground: oklch(0.95 0.01 80);
-  --sidebar-border: oklch(0.30 0.02 55);
-  --sidebar-ring: oklch(0.65 0.15 55);
+  --sidebar: #041a22;
+  --sidebar-foreground: #f5f5f0;
+  --sidebar-primary: #AF9A4F;
+  --sidebar-primary-foreground: #02141B;
+  --sidebar-accent: #1a3a4a;
+  --sidebar-accent-foreground: #f5f5f0;
+  --sidebar-border: #1e4050;
+  --sidebar-ring: #AF9A4F;
 }
 
 

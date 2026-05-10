@@ -4,7 +4,16 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { Menu, X, Play, BookOpen, Languages, FileText, Music } from "lucide-react"
+import { Menu, X, Play, BookOpen, Languages, FileText, Music, LogIn, LogOut, User } from "lucide-react"
+import { useAuth } from "@/hooks/use-auth"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const navItems = [
   { href: "/rodas", label: "Rodas", icon: Play },
@@ -17,6 +26,7 @@ const navItems = [
 export function Navigation() {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { user, loading, signOut } = useAuth()
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -52,6 +62,52 @@ export function Navigation() {
                 </Link>
               )
             })}
+
+            {/* Auth Section */}
+            {!loading && (
+              <>
+                {user ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="ml-2 gap-2">
+                        {user.user_metadata?.avatar_url ? (
+                          <img 
+                            src={user.user_metadata.avatar_url} 
+                            alt="Avatar" 
+                            className="w-6 h-6 rounded-full"
+                          />
+                        ) : (
+                          <User className="w-4 h-4" />
+                        )}
+                        <span className="max-w-24 truncate">
+                          {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                        </span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem asChild>
+                        <Link href="/perfil" className="cursor-pointer">
+                          <User className="w-4 h-4 mr-2" />
+                          Mi Perfil
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={signOut} className="cursor-pointer text-destructive">
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Cerrar sesión
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Link href="/auth/login">
+                    <Button variant="outline" className="ml-2 gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                      <LogIn className="w-4 h-4" />
+                      Entrar
+                    </Button>
+                  </Link>
+                )}
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -88,6 +144,59 @@ export function Navigation() {
                   </Link>
                 )
               })}
+
+              {/* Mobile Auth */}
+              {!loading && (
+                <div className="pt-4 mt-2 border-t border-border">
+                  {user ? (
+                    <>
+                      <div className="flex items-center gap-3 px-4 py-2 text-foreground">
+                        {user.user_metadata?.avatar_url ? (
+                          <img 
+                            src={user.user_metadata.avatar_url} 
+                            alt="Avatar" 
+                            className="w-8 h-8 rounded-full"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                            <User className="w-4 h-4 text-primary-foreground" />
+                          </div>
+                        )}
+                        <span className="font-medium">
+                          {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                        </span>
+                      </div>
+                      <Link
+                        href="/perfil"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:text-foreground"
+                      >
+                        <User className="w-5 h-5" />
+                        Mi Perfil
+                      </Link>
+                      <button
+                        onClick={() => {
+                          signOut()
+                          setMobileMenuOpen(false)
+                        }}
+                        className="flex items-center gap-3 px-4 py-3 text-destructive hover:bg-destructive/10 w-full rounded-md"
+                      >
+                        <LogOut className="w-5 h-5" />
+                        Cerrar sesión
+                      </button>
+                    </>
+                  ) : (
+                    <Link
+                      href="/auth/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 bg-primary text-primary-foreground rounded-md font-medium"
+                    >
+                      <LogIn className="w-5 h-5" />
+                      Iniciar sesión
+                    </Link>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
