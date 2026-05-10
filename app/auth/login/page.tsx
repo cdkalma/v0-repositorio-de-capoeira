@@ -32,7 +32,7 @@ export default function LoginPage() {
             </svg>
           </div>
           <CardTitle className="font-serif text-2xl text-foreground">
-            Axé Capoeira
+            GAIA Capoeira
           </CardTitle>
           <CardDescription className="text-muted-foreground">
             Inicia sesión para acceder al repositorio del grupo

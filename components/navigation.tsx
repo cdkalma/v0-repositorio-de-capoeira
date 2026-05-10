@@ -34,10 +34,10 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-serif font-bold text-lg">A</span>
+              <span className="text-primary-foreground font-serif font-bold text-lg">G</span>
             </div>
             <span className="font-serif text-xl font-bold text-foreground group-hover:text-primary transition-colors">
-              Axé Capoeira
+              GAIA Capoeira
             </span>
           </Link>
 

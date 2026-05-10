@@ -8,10 +8,10 @@ export function Footer() {
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-serif font-bold text-lg">A</span>
+                <span className="text-primary-foreground font-serif font-bold text-lg">G</span>
               </div>
               <span className="font-serif text-xl font-bold text-foreground">
-                Axé Capoeira
+                GAIA Capoeira
               </span>
             </Link>
             <p className="text-muted-foreground max-w-md">
@@ -43,7 +43,7 @@ export function Footer() {
         
         <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Axé Capoeira. Todos los derechos reservados.
+            © {new Date().getFullYear()} GAIA Capoeira. Todos los derechos reservados.
           </p>
           <p className="text-sm text-muted-foreground">
             Hecho con amor por la comunidad

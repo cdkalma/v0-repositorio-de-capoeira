@@ -16,7 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Axé Capoeira - Repositorio del Grupo',
+  title: 'GAIA Capoeira - Repositorio del Grupo',
   description: 'Videos, movimientos, canciones, artículos y aprendizaje de portugués para nuestra comunidad de capoeira',
   generator: 'v0.app',
   icons: {

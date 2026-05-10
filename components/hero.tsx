@@ -56,7 +56,7 @@ export function Hero() {
             <span className="text-sm font-medium">Repositorio Digital</span>
           </div>
           <h1 className="font-serif text-5xl md:text-7xl font-bold text-foreground mb-6 text-balance">
-            Axé Capoeira
+            GAIA Capoeira
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto text-pretty">
             Un espacio para preservar y compartir nuestra cultura, movimientos, música y conocimiento
