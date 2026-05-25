@@ -70,17 +70,11 @@ export function Navigation() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="ml-2 gap-2">
-                        {user.user_metadata?.avatar_url ? (
-                          <img 
-                            src={user.user_metadata.avatar_url} 
-                            alt="Avatar" 
-                            className="w-6 h-6 rounded-full"
-                          />
-                        ) : (
-                          <User className="w-4 h-4" />
-                        )}
+                        <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                          <User className="w-3 h-3 text-primary-foreground" />
+                        </div>
                         <span className="max-w-24 truncate">
-                          {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                          {user.name || user.username}
                         </span>
                       </Button>
                     </DropdownMenuTrigger>
@@ -151,19 +145,11 @@ export function Navigation() {
                   {user ? (
                     <>
                       <div className="flex items-center gap-3 px-4 py-2 text-foreground">
-                        {user.user_metadata?.avatar_url ? (
-                          <img 
-                            src={user.user_metadata.avatar_url} 
-                            alt="Avatar" 
-                            className="w-8 h-8 rounded-full"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                            <User className="w-4 h-4 text-primary-foreground" />
-                          </div>
-                        )}
+                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                          <User className="w-4 h-4 text-primary-foreground" />
+                        </div>
                         <span className="font-medium">
-                          {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                          {user.name || user.username}
                         </span>
                       </div>
                       <Link
