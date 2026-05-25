@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Play, BookOpen, Languages, FileText, Music, ArrowRight } from "lucide-react"
+import { Play, FileText, Music, ArrowRight } from "lucide-react"
 
 const sections = [
   {
@@ -8,20 +8,6 @@ const sections = [
     description: "Videos de nuestras rodas y encuentros",
     icon: Play,
     color: "bg-primary",
-  },
-  {
-    href: "/movimientos",
-    title: "Movimientos",
-    description: "Biblioteca completa de técnicas",
-    icon: BookOpen,
-    color: "bg-accent",
-  },
-  {
-    href: "/portugues",
-    title: "Portugués",
-    description: "Aprende el idioma de la capoeira",
-    icon: Languages,
-    color: "bg-chart-3",
   },
   {
     href: "/articulos",
@@ -45,10 +31,10 @@ export function Hero() {
       {/* Hero Banner */}
       <div className="relative h-[60vh] min-h-[400px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-secondary/50 to-background" />
-        <div 
+        <div
           className="absolute inset-0 opacity-20"
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a574' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a574' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C%2Fg%3E%3C%2Fsvg%3E")`,
           }}
         />
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
@@ -59,7 +45,7 @@ export function Hero() {
             GAIA Capoeira
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto text-pretty">
-            Un espacio para preservar y compartir nuestra cultura, movimientos, música y conocimiento
+            Un espacio para preservar y compartir nuestra cultura, música y conocimiento
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
@@ -70,10 +56,10 @@ export function Hero() {
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              href="/movimientos"
+              href="/canciones"
               className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors"
             >
-              Ver Movimientos
+              Ver Canciones
             </Link>
           </div>
         </div>
@@ -81,19 +67,18 @@ export function Hero() {
 
       {/* Section Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sections.map((section, index) => {
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {sections.map((section) => {
             const Icon = section.icon
             return (
               <Link
                 key={section.href}
                 href={section.href}
-                className={`group relative overflow-hidden rounded-2xl p-8 transition-all hover:scale-[1.02] hover:shadow-xl ${
-                  index === 0 ? "md:col-span-2 lg:col-span-1" : ""
-                }`}
+                className="group relative overflow-hidden rounded-2xl p-8 transition-all hover:scale-[1.02] hover:shadow-xl"
                 style={{ backgroundColor: "var(--card)" }}
               >
-                <div className="absolute top-0 right-0 w-32 h-32 -mr-8 -mt-8 rounded-full opacity-20 transition-transform group-hover:scale-150"
+                <div
+                  className="absolute top-0 right-0 w-32 h-32 -mr-8 -mt-8 rounded-full opacity-20 transition-transform group-hover:scale-150"
                   style={{ backgroundColor: `var(--${section.color.replace("bg-", "")})` }}
                 />
                 <div className={`inline-flex p-3 rounded-xl ${section.color} mb-4`}>
@@ -102,9 +87,7 @@ export function Hero() {
                 <h3 className="font-serif text-2xl font-bold text-card-foreground mb-2">
                   {section.title}
                 </h3>
-                <p className="text-muted-foreground mb-4">
-                  {section.description}
-                </p>
+                <p className="text-muted-foreground mb-4">{section.description}</p>
                 <span className="inline-flex items-center gap-1 text-primary font-medium group-hover:gap-2 transition-all">
                   Explorar
                   <ArrowRight className="w-4 h-4" />
