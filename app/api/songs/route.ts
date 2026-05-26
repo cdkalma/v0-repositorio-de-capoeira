@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { title, type, lyrics, translation, context, video_url, mestre } = body
+  const { title, type, lyrics, translation, context, video_url, mestre, tags } = body
 
   if (!title || !type || !lyrics) {
     return NextResponse.json(
@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
         context: context || null,
         video_url: video_url || null,
         mestre: mestre || null,
+        tags: tags && tags.length > 0 ? tags : null,
         // user_id: Si la columna es obligatoria con FK a auth.users,
         // debes hacer esa columna nullable en Supabase Dashboard.
       })

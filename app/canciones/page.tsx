@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { cn } from "@/lib/utils"
 
 interface Song {
   id: string
@@ -31,6 +32,7 @@ interface Song {
   context: string | null
   video_url: string | null
   mestre: string | null
+  tags: string[] | null   // aquí guardamos los ritmos
   created_at: string
 }
 
@@ -43,6 +45,20 @@ const songTypes = [
   { id: "samba", label: "Sambas" },
 ]
 
+// Ritmos / toques del berimbau más comunes en capoeira
+const RITMOS = [
+  "Angola",
+  "São Bento Grande",
+  "São Bento Pequeno",
+  "Iuna",
+  "Banguela",
+  "Idalina",
+  "Cavalaria",
+  "Amazonas",
+  "Santa Maria",
+  "Apanha Laranja",
+]
+
 const EMPTY_FORM = {
   title: "",
   type: "corrido",
@@ -51,6 +67,7 @@ const EMPTY_FORM = {
   context: "",
   video_url: "",
   mestre: "",
+  ritmos: [] as string[],
 }
 
 export default function CancionesPage() {
@@ -102,9 +119,20 @@ export default function CancionesPage() {
       context: song.context ?? "",
       video_url: song.video_url ?? "",
       mestre: song.mestre ?? "",
+      ritmos: song.tags ?? [],
     })
     setFormError("")
     setDialogOpen(true)
+  }
+
+  // Toggle un ritmo en el array
+  const toggleRitmo = (ritmo: string) => {
+    setForm((f) => ({
+      ...f,
+      ritmos: f.ritmos.includes(ritmo)
+        ? f.ritmos.filter((r) => r !== ritmo)
+        : [...f.ritmos, ritmo],
+    }))
   }
 
   // ── Save (create / update) ─────────────────────────────────────────
@@ -116,14 +144,16 @@ export default function CancionesPage() {
     const url = editingSong ? `/api/songs/${editingSong.id}` : "/api/songs"
     const method = editingSong ? "PUT" : "POST"
 
+    // Los ritmos se guardan en el campo "tags" de Supabase
+    const payload = { ...form, tags: form.ritmos.length > 0 ? form.ritmos : null }
+
     try {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       })
       const data = await res.json()
-
       if (!res.ok) throw new Error(data.error ?? "Error al guardar")
 
       await fetchSongs()
@@ -153,8 +183,8 @@ export default function CancionesPage() {
 
   return (
     <SectionLayout
-      title="Canciones"
-      description="Letras, traducciones y videos de las canciones de capoeira de nuestro grupo."
+      title="Sabiá cantou"
+      description="Cancionero para que no pares de cantar en la roda"
     >
       {/* Song Types Info */}
       <div className="bg-card rounded-xl p-6 mb-8">
@@ -247,6 +277,7 @@ export default function CancionesPage() {
               history={song.context ?? ""}
               videoUrl={song.video_url ?? ""}
               mestre={song.mestre ?? ""}
+              ritmos={song.tags ?? []}
               onEdit={() => openEdit(song)}
               onDelete={() => handleDelete(song.id)}
             />
@@ -264,6 +295,7 @@ export default function CancionesPage() {
           </DialogHeader>
 
           <form onSubmit={handleSave} className="space-y-5 mt-2">
+            {/* Título + Tipo */}
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="title">Título *</Label>
@@ -297,6 +329,41 @@ export default function CancionesPage() {
               </div>
             </div>
 
+            {/* Ritmo — multi-selección */}
+            <div className="space-y-2">
+              <Label>
+                Ritmo{" "}
+                <span className="text-muted-foreground font-normal text-xs">(puede elegir varios)</span>
+              </Label>
+              <div className="flex flex-wrap gap-2">
+                {RITMOS.map((ritmo) => {
+                  const selected = form.ritmos.includes(ritmo)
+                  return (
+                    <button
+                      key={ritmo}
+                      type="button"
+                      disabled={saving}
+                      onClick={() => toggleRitmo(ritmo)}
+                      className={cn(
+                        "px-3 py-1.5 rounded-full text-sm font-medium border transition-all",
+                        selected
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "border-border text-muted-foreground hover:border-primary hover:text-foreground"
+                      )}
+                    >
+                      {ritmo}
+                    </button>
+                  )
+                })}
+              </div>
+              {form.ritmos.length > 0 && (
+                <p className="text-xs text-primary">
+                  Seleccionados: {form.ritmos.join(" · ")}
+                </p>
+              )}
+            </div>
+
+            {/* Mestre */}
             <div className="space-y-2">
               <Label htmlFor="mestre">Mestre / Autor (opcional)</Label>
               <Input
@@ -308,6 +375,7 @@ export default function CancionesPage() {
               />
             </div>
 
+            {/* Letra */}
             <div className="space-y-2">
               <Label htmlFor="lyrics">Letra *</Label>
               <Textarea
@@ -322,6 +390,7 @@ export default function CancionesPage() {
               />
             </div>
 
+            {/* Traducción */}
             <div className="space-y-2">
               <Label htmlFor="translation">Traducción (opcional)</Label>
               <Textarea
@@ -335,6 +404,7 @@ export default function CancionesPage() {
               />
             </div>
 
+            {/* Historia */}
             <div className="space-y-2">
               <Label htmlFor="context">Historia / Contexto (opcional)</Label>
               <Textarea
@@ -347,6 +417,7 @@ export default function CancionesPage() {
               />
             </div>
 
+            {/* Video URL */}
             <div className="space-y-2">
               <Label htmlFor="video_url">URL de video YouTube (opcional)</Label>
               <Input
@@ -376,7 +447,7 @@ export default function CancionesPage() {
               </Button>
               <Button type="submit" disabled={saving}>
                 {saving ? (
-                  <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Guardando...</>
+                  <><Loader2 className="w-4 h-4 animate-spin mr-2" />Guardando...</>
                 ) : editingSong ? "Guardar cambios" : "Agregar canción"}
               </Button>
             </div>

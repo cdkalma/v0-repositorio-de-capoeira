@@ -13,7 +13,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
   const { id } = await params
   const body = await request.json()
-  const { title, type, lyrics, translation, context, video_url, mestre } = body
+  const { title, type, lyrics, translation, context, video_url, mestre, tags } = body
 
   try {
     const supabase = createAdminClient()
@@ -27,6 +27,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
         context: context || null,
         video_url: video_url || null,
         mestre: mestre || null,
+        tags: tags && tags.length > 0 ? tags : null,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)

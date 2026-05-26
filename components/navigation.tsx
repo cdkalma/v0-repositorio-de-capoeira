@@ -18,7 +18,7 @@ import {
 const navItems = [
   { href: "/rodas", label: "Rodas", icon: Play },
   { href: "/articulos", label: "Artículos", icon: FileText },
-  { href: "/canciones", label: "Canciones", icon: Music },
+  { href: "/canciones", label: "Sabiá cantou", icon: Music },
 ]
 
 export function Navigation() {

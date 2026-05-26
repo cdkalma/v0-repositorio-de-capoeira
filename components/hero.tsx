@@ -18,8 +18,8 @@ const sections = [
   },
   {
     href: "/canciones",
-    title: "Canciones",
-    description: "Letras, videos y tradiciones",
+    title: "Sabiá cantou",
+    description: "Cancionero para que no pares de cantar en la roda",
     icon: Music,
     color: "bg-chart-5",
   },
@@ -59,7 +59,7 @@ export function Hero() {
               href="/canciones"
               className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors"
             >
-              Ver Canciones
+              Sabiá cantou
             </Link>
           </div>
         </div>

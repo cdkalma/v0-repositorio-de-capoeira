@@ -14,6 +14,7 @@ export interface SongCardProps {
   history: string
   videoUrl: string
   mestre?: string
+  ritmos?: string[]
   onEdit?: () => void
   onDelete?: () => void
 }
@@ -42,6 +43,7 @@ export function SongCard({
   history,
   videoUrl,
   mestre,
+  ritmos,
   onEdit,
   onDelete,
 }: SongCardProps) {
@@ -85,6 +87,14 @@ export function SongCard({
                 >
                   {typeLabels[type] ?? type}
                 </span>
+                {ritmos && ritmos.length > 0 && ritmos.map((r) => (
+                  <span
+                    key={r}
+                    className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-secondary text-secondary-foreground"
+                  >
+                    {r}
+                  </span>
+                ))}
                 {mestre && (
                   <span className="text-xs text-muted-foreground">{mestre}</span>
                 )}
