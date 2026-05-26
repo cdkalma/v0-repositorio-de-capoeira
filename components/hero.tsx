@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Play, FileText, Music, ArrowRight } from "lucide-react"
+import { Play, ScrollText, Music, ArrowRight } from "lucide-react"
 
 const sections = [
   {
@@ -10,10 +10,10 @@ const sections = [
     color: "bg-primary",
   },
   {
-    href: "/articulos",
-    title: "Artículos",
-    description: "Escritos por miembros del grupo",
-    icon: FileText,
+    href: "/politica",
+    title: "Política",
+    description: "Manual de convivencia, cordas de graduación y documentos del grupo",
+    icon: ScrollText,
     color: "bg-chart-4",
   },
   {
@@ -42,7 +42,7 @@ export function Hero() {
             <span className="text-sm font-medium">Repositorio Digital</span>
           </div>
           <h1 className="font-serif text-5xl md:text-7xl font-bold text-foreground mb-6 text-balance">
-            GAIA Capoeira
+            Areia no Mar
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto text-pretty">
             Un espacio para preservar y compartir nuestra cultura, música y conocimiento
@@ -60,6 +60,12 @@ export function Hero() {
               className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors"
             >
               Sabiá cantou
+            </Link>
+            <Link
+              href="/politica"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors"
+            >
+              Política
             </Link>
           </div>
         </div>

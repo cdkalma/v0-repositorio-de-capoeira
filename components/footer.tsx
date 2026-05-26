@@ -8,29 +8,27 @@ export function Footer() {
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-serif font-bold text-lg">G</span>
+                <span className="text-primary-foreground font-serif font-bold text-lg">A</span>
               </div>
               <span className="font-serif text-xl font-bold text-foreground">
-                GAIA Capoeira
+                Areia no Mar
               </span>
             </Link>
             <p className="text-muted-foreground max-w-md">
-              Preservando la tradición y cultura de la capoeira a través de nuestra comunidad. 
+              Preservando la tradición y cultura de la capoeira a través de nuestra comunidad.
               Un espacio digital para aprender, compartir y crecer juntos.
             </p>
           </div>
-          
+
           <div>
             <h4 className="font-serif font-bold text-foreground mb-4">Secciones</h4>
             <ul className="space-y-2">
               <li><Link href="/rodas" className="text-muted-foreground hover:text-primary transition-colors">Rodas</Link></li>
-              <li><Link href="/movimientos" className="text-muted-foreground hover:text-primary transition-colors">Movimientos</Link></li>
-              <li><Link href="/portugues" className="text-muted-foreground hover:text-primary transition-colors">Portugués</Link></li>
-              <li><Link href="/articulos" className="text-muted-foreground hover:text-primary transition-colors">Artículos</Link></li>
-              <li><Link href="/canciones" className="text-muted-foreground hover:text-primary transition-colors">Canciones</Link></li>
+              <li><Link href="/politica" className="text-muted-foreground hover:text-primary transition-colors">Política</Link></li>
+              <li><Link href="/canciones" className="text-muted-foreground hover:text-primary transition-colors">Sabiá cantou</Link></li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="font-serif font-bold text-foreground mb-4">Comunidad</h4>
             <ul className="space-y-2">
@@ -40,10 +38,10 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        
+
         <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} GAIA Capoeira. Todos los derechos reservados.
+            © {new Date().getFullYear()} Areia no Mar. Todos los derechos reservados.
           </p>
           <p className="text-sm text-muted-foreground">
             Hecho con amor por la comunidad

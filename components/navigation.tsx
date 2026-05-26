@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { Menu, X, Play, FileText, Music, LogIn, LogOut, User } from "lucide-react"
+import { Menu, X, Play, ScrollText, Music, LogIn, LogOut, User } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import { Button } from "@/components/ui/button"
 import {
@@ -17,7 +17,7 @@ import {
 
 const navItems = [
   { href: "/rodas", label: "Rodas", icon: Play },
-  { href: "/articulos", label: "Artículos", icon: FileText },
+  { href: "/politica", label: "Política", icon: ScrollText },
   { href: "/canciones", label: "Sabiá cantou", icon: Music },
 ]
 
@@ -32,10 +32,10 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-serif font-bold text-lg">G</span>
+              <span className="text-primary-foreground font-serif font-bold text-lg">A</span>
             </div>
             <span className="font-serif text-xl font-bold text-foreground group-hover:text-primary transition-colors">
-              GAIA Capoeira
+              Areia no Mar
             </span>
           </Link>
 
