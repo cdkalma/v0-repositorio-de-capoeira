@@ -4,11 +4,14 @@ import { getSession } from "@/lib/auth/session"
 
 type Params = { params: Promise<{ id: string }> }
 
-// PUT /api/rodas/[id] — actualizar roda
+// PUT /api/rodas/[id] — actualizar roda (solo admin)
 export async function PUT(request: NextRequest, { params }: Params) {
   const session = await getSession()
   if (!session.user) {
     return NextResponse.json({ error: "No autenticado" }, { status: 401 })
+  }
+  if (session.user.role !== "admin") {
+    return NextResponse.json({ error: "Sin permisos" }, { status: 403 })
   }
 
   const { id } = await params
@@ -39,11 +42,14 @@ export async function PUT(request: NextRequest, { params }: Params) {
   }
 }
 
-// DELETE /api/rodas/[id] — eliminar roda
+// DELETE /api/rodas/[id] — eliminar roda (solo admin)
 export async function DELETE(_request: NextRequest, { params }: Params) {
   const session = await getSession()
   if (!session.user) {
     return NextResponse.json({ error: "No autenticado" }, { status: 401 })
+  }
+  if (session.user.role !== "admin") {
+    return NextResponse.json({ error: "Sin permisos" }, { status: 403 })
   }
 
   const { id } = await params

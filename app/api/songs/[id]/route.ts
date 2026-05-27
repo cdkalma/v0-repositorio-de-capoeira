@@ -4,12 +4,13 @@ import { getSession } from "@/lib/auth/session"
 
 type Params = { params: Promise<{ id: string }> }
 
-// PUT /api/songs/[id] — actualizar canción
+// PUT /api/songs/[id] — actualizar canción (admin o member)
 export async function PUT(request: NextRequest, { params }: Params) {
   const session = await getSession()
   if (!session.user) {
     return NextResponse.json({ error: "No autenticado" }, { status: 401 })
   }
+  // Ambos roles pueden editar canciones
 
   const { id } = await params
   const body = await request.json()
@@ -42,11 +43,14 @@ export async function PUT(request: NextRequest, { params }: Params) {
   }
 }
 
-// DELETE /api/songs/[id] — eliminar canción
+// DELETE /api/songs/[id] — eliminar canción (solo admin)
 export async function DELETE(_request: NextRequest, { params }: Params) {
   const session = await getSession()
   if (!session.user) {
     return NextResponse.json({ error: "No autenticado" }, { status: 401 })
+  }
+  if (session.user.role !== "admin") {
+    return NextResponse.json({ error: "Sin permisos" }, { status: 403 })
   }
 
   const { id } = await params

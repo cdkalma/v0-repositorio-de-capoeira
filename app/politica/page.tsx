@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback, useRef } from "react"
+import { useAuth } from "@/hooks/use-auth"
 import { SectionLayout } from "@/components/section-layout"
 import {
   ScrollText,
@@ -66,6 +67,9 @@ const EMPTY_FORM = {
 }
 
 export default function PoliticaPage() {
+  const { user } = useAuth()
+  const isAdmin = user?.role === "admin"
+
   const [docs, setDocs] = useState<PoliticaDoc[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -242,10 +246,12 @@ export default function PoliticaPage() {
             </button>
           ))}
         </div>
-        <Button onClick={openAdd} className="shrink-0 gap-2">
-          <Plus className="w-4 h-4" />
-          Nuevo documento
-        </Button>
+        {isAdmin && (
+          <Button onClick={openAdd} className="shrink-0 gap-2">
+            <Plus className="w-4 h-4" />
+            Nuevo documento
+          </Button>
+        )}
       </div>
 
       {/* States */}
@@ -334,29 +340,31 @@ export default function PoliticaPage() {
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-1 shrink-0">
-                  <span
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => openEdit(doc)}
-                    onKeyDown={(e) => e.key === "Enter" && openEdit(doc)}
-                    className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer"
-                    aria-label="Editar documento"
-                  >
-                    <Pencil className="w-4 h-4" />
-                  </span>
-                  <span
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => handleDelete(doc.id)}
-                    onKeyDown={(e) => e.key === "Enter" && handleDelete(doc.id)}
-                    className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
-                    aria-label="Eliminar documento"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </span>
-                </div>
+                {/* Actions — solo admin */}
+                {isAdmin && (
+                  <div className="flex items-center gap-1 shrink-0">
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => openEdit(doc)}
+                      onKeyDown={(e) => e.key === "Enter" && openEdit(doc)}
+                      className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer"
+                      aria-label="Editar documento"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </span>
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => handleDelete(doc.id)}
+                      onKeyDown={(e) => e.key === "Enter" && handleDelete(doc.id)}
+                      className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+                      aria-label="Eliminar documento"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </span>
+                  </div>
+                )}
               </div>
             </article>
           ))}

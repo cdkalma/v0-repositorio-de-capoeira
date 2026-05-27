@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getSession } from "@/lib/auth/session"
-import { verifyCredentials } from "@/lib/auth/users"
+import { verifyCredentials } from "@/lib/auth/db"
 
 export async function POST(request: NextRequest) {
   const { username, password } = await request.json()
@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Usuario y contraseña requeridos" }, { status: 400 })
   }
 
-  const user = verifyCredentials(username, password)
+  const user = await verifyCredentials(username, password)
 
   if (!user) {
     return NextResponse.json({ error: "Usuario o contraseña incorrectos" }, { status: 401 })

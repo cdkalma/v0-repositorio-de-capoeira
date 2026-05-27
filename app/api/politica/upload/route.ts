@@ -2,11 +2,14 @@ import { NextRequest, NextResponse } from "next/server"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { getSession } from "@/lib/auth/session"
 
-// POST /api/politica/upload — subir archivo a Supabase Storage
+// POST /api/politica/upload — subir archivo a Supabase Storage (solo admin)
 export async function POST(request: NextRequest) {
   const session = await getSession()
   if (!session.user) {
     return NextResponse.json({ error: "No autenticado" }, { status: 401 })
+  }
+  if (session.user.role !== "admin") {
+    return NextResponse.json({ error: "Sin permisos" }, { status: 403 })
   }
 
   try {

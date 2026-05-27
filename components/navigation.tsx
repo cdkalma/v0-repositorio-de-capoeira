@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { Menu, X, Play, ScrollText, Music, LogIn, LogOut, User } from "lucide-react"
+import { Menu, X, Play, ScrollText, Music, LogIn, LogOut, User, Users, ShieldCheck } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import { Button } from "@/components/ui/button"
 import {
@@ -76,13 +76,24 @@ export function Navigation() {
                         </span>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuContent align="end" className="w-52">
                       <DropdownMenuItem asChild>
                         <Link href="/perfil" className="cursor-pointer">
                           <User className="w-4 h-4 mr-2" />
                           Mi Perfil
                         </Link>
                       </DropdownMenuItem>
+                      {user.role === "admin" && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem asChild>
+                            <Link href="/admin/usuarios" className="cursor-pointer">
+                              <Users className="w-4 h-4 mr-2" />
+                              Gestionar Usuarios
+                            </Link>
+                          </DropdownMenuItem>
+                        </>
+                      )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={signOut} className="cursor-pointer text-destructive">
                         <LogOut className="w-4 h-4 mr-2" />
@@ -158,6 +169,16 @@ export function Navigation() {
                         <User className="w-5 h-5" />
                         Mi Perfil
                       </Link>
+                      {user.role === "admin" && (
+                        <Link
+                          href="/admin/usuarios"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:text-foreground"
+                        >
+                          <ShieldCheck className="w-5 h-5" />
+                          Gestionar Usuarios
+                        </Link>
+                      )}
                       <button
                         onClick={() => {
                           signOut()

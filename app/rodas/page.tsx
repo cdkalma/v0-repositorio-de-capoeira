@@ -5,6 +5,7 @@ import { SectionLayout } from "@/components/section-layout"
 import { VideoCard } from "@/components/video-card"
 import { Play, Calendar, MapPin, Users, Plus, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/hooks/use-auth"
 import {
   Dialog,
   DialogContent,
@@ -35,6 +36,9 @@ const EMPTY_FORM = {
 }
 
 export default function RodasPage() {
+  const { user } = useAuth()
+  const isAdmin = user?.role === "admin"
+
   const [rodas, setRodas] = useState<Roda[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -137,16 +141,18 @@ export default function RodasPage() {
         </div>
       </div>
 
-      {/* Add button */}
-      <div className="flex justify-end mb-6">
-        <Button
-          onClick={() => { setForm(EMPTY_FORM); setFormError(""); setDialogOpen(true) }}
-          className="gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          Agregar roda
-        </Button>
-      </div>
+      {/* Add button — solo admin */}
+      {isAdmin && (
+        <div className="flex justify-end mb-6">
+          <Button
+            onClick={() => { setForm(EMPTY_FORM); setFormError(""); setDialogOpen(true) }}
+            className="gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Agregar roda
+          </Button>
+        </div>
+      )}
 
       {/* States */}
       {loading && (
@@ -186,7 +192,7 @@ export default function RodasPage() {
               location={roda.location ?? ""}
               eventDate={roda.event_date ?? ""}
               views={roda.views ?? 0}
-              onDelete={() => handleDelete(roda.id)}
+              onDelete={isAdmin ? () => handleDelete(roda.id) : undefined}
             />
           ))}
         </div>

@@ -5,6 +5,7 @@ import { SectionLayout } from "@/components/section-layout"
 import { SongCard } from "@/components/song-card"
 import { Music, Filter, Plus, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/hooks/use-auth"
 import {
   Dialog,
   DialogContent,
@@ -71,6 +72,9 @@ const EMPTY_FORM = {
 }
 
 export default function CancionesPage() {
+  const { user } = useAuth()
+  const isAdmin = user?.role === "admin"
+
   const [songs, setSongs] = useState<Song[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -230,6 +234,7 @@ export default function CancionesPage() {
             </button>
           ))}
         </div>
+        {/* Cualquier usuario autenticado puede agregar canciones */}
         <Button onClick={openAdd} className="shrink-0 gap-2">
           <Plus className="w-4 h-4" />
           Nueva canción
@@ -279,7 +284,7 @@ export default function CancionesPage() {
               mestre={song.mestre ?? ""}
               ritmos={song.tags ?? []}
               onEdit={() => openEdit(song)}
-              onDelete={() => handleDelete(song.id)}
+              onDelete={isAdmin ? () => handleDelete(song.id) : undefined}
             />
           ))}
         </div>
