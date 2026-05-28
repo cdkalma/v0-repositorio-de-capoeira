@@ -3,9 +3,9 @@ import { Play, ScrollText, Music, ArrowRight } from "lucide-react"
 
 const sections = [
   {
-    href: "/rodas",
-    title: "Rodas",
-    description: "Videos de nuestras rodas y encuentros",
+    href: "/galera",
+    title: "Galera",
+    description: "Rodas y cantorias de nuestra comunidad",
     icon: Play,
     color: "bg-primary",
   },
@@ -49,10 +49,10 @@ export function Hero() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
-              href="/rodas"
+              href="/galera"
               className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
             >
-              Explorar Rodas
+              Explorar Galera
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link

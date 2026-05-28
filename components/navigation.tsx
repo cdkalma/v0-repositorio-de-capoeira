@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 const navItems = [
-  { href: "/rodas", label: "Rodas", icon: Play },
+  { href: "/galera", label: "Galera", icon: Play },
   { href: "/politica", label: "Política", icon: ScrollText },
   { href: "/canciones", label: "Sabiá cantou", icon: Music },
 ]
