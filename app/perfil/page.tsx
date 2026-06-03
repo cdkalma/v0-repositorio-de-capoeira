@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { User, Award, Loader2, CheckCircle } from "lucide-react"
+import { User, Award, Loader2, CheckCircle, Eye, EyeOff } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
@@ -20,22 +20,34 @@ export default function PerfilPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
 
+  // ── Apodo ──────────────────────────────────────────────────────────
   const [apodo, setApodo] = useState("")
-  const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
-  const [error, setError] = useState("")
+  const [savingApodo, setSavingApodo] = useState(false)
+  const [savedApodo, setSavedApodo] = useState(false)
+  const [apodoError, setApodoError] = useState("")
+
+  // ── Contraseña ─────────────────────────────────────────────────────
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [savingPass, setSavingPass] = useState(false)
+  const [savedPass, setSavedPass] = useState(false)
+  const [passError, setPassError] = useState("")
+  const [showCurrent, setShowCurrent] = useState(false)
+  const [showNew, setShowNew] = useState(false)
 
   useEffect(() => {
     if (!loading && !user) router.push("/auth/login")
     if (user) setApodo(user.apodo ?? "")
   }, [user, loading, router])
 
+  // ── Guardar apodo ──────────────────────────────────────────────────
   const handleSaveApodo = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user) return
-    setSaving(true)
-    setSaved(false)
-    setError("")
+    setSavingApodo(true)
+    setSavedApodo(false)
+    setApodoError("")
 
     try {
       const res = await fetch(`/api/users/${user.id}`, {
@@ -45,12 +57,50 @@ export default function PerfilPage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? "Error al guardar")
-      setSaved(true)
-      setTimeout(() => setSaved(false), 3000)
+      setSavedApodo(true)
+      setTimeout(() => setSavedApodo(false), 3000)
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Error al guardar")
+      setApodoError(err instanceof Error ? err.message : "Error al guardar")
     } finally {
-      setSaving(false)
+      setSavingApodo(false)
+    }
+  }
+
+  // ── Cambiar contraseña ─────────────────────────────────────────────
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!user) return
+    setPassError("")
+    setSavedPass(false)
+
+    if (newPassword.length < 6) {
+      setPassError("La nueva contraseña debe tener al menos 6 caracteres")
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      setPassError("Las contraseñas no coinciden")
+      return
+    }
+
+    setSavingPass(true)
+    try {
+      const res = await fetch(`/api/users/${user.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, password: newPassword }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? "Error al cambiar contraseña")
+
+      setSavedPass(true)
+      setCurrentPassword("")
+      setNewPassword("")
+      setConfirmPassword("")
+      setTimeout(() => setSavedPass(false), 4000)
+    } catch (err: unknown) {
+      setPassError(err instanceof Error ? err.message : "Error al cambiar contraseña")
+    } finally {
+      setSavingPass(false)
     }
   }
 
@@ -71,7 +121,7 @@ export default function PerfilPage() {
       <main className="pt-24 pb-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
-          {/* Info card */}
+          {/* ── Info card ── */}
           <Card className="border-border bg-card">
             <CardHeader className="text-center border-b border-border pb-6">
               <div className="mx-auto mb-4">
@@ -98,16 +148,12 @@ export default function PerfilPage() {
             <CardContent className="pt-6">
               <div className="grid gap-4 sm:grid-cols-2 text-sm">
                 <div className="space-y-1">
-                  <p className="text-muted-foreground font-medium uppercase text-xs tracking-wide">
-                    Usuario
-                  </p>
+                  <p className="text-muted-foreground font-medium uppercase text-xs tracking-wide">Usuario</p>
                   <p className="text-foreground">@{user.username}</p>
                 </div>
                 {user.email && (
                   <div className="space-y-1">
-                    <p className="text-muted-foreground font-medium uppercase text-xs tracking-wide">
-                      Email
-                    </p>
+                    <p className="text-muted-foreground font-medium uppercase text-xs tracking-wide">Email</p>
                     <p className="text-foreground">{user.email}</p>
                   </div>
                 )}
@@ -115,14 +161,12 @@ export default function PerfilPage() {
             </CardContent>
           </Card>
 
-          {/* Edit apodo */}
+          {/* ── Editar apodo ── */}
           <Card className="border-border bg-card">
             <CardHeader className="border-b border-border pb-4">
-              <CardTitle className="font-serif text-lg text-foreground">
-                Editar apodo
-              </CardTitle>
+              <CardTitle className="font-serif text-lg text-foreground">Apodo</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Tu apodo o nombre de capoeira aparecerá en tu perfil.
+                Tu nombre de capoeira aparecerá en tu perfil.
               </p>
             </CardHeader>
             <CardContent className="pt-6">
@@ -133,28 +177,122 @@ export default function PerfilPage() {
                     id="apodo"
                     value={apodo}
                     onChange={(e) => setApodo(e.target.value)}
-                    disabled={saving}
+                    disabled={savingApodo}
                     placeholder="Ej: Mariposa do Mar"
                     maxLength={60}
                   />
                 </div>
-
-                {error && (
+                {apodoError && (
                   <p className="text-sm text-destructive bg-destructive/10 rounded-md py-2 px-3">
-                    {error}
+                    {apodoError}
+                  </p>
+                )}
+                <div className="flex items-center gap-3">
+                  <Button type="submit" disabled={savingApodo}>
+                    {savingApodo ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Guardando...</> : "Guardar apodo"}
+                  </Button>
+                  {savedApodo && (
+                    <span className="flex items-center gap-1 text-sm text-primary">
+                      <CheckCircle className="w-4 h-4" />¡Guardado!
+                    </span>
+                  )}
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* ── Cambiar contraseña ── */}
+          <Card className="border-border bg-card">
+            <CardHeader className="border-b border-border pb-4">
+              <CardTitle className="font-serif text-lg text-foreground">Cambiar contraseña</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Necesitas tu contraseña actual para establecer una nueva.
+              </p>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <form onSubmit={handleChangePassword} className="space-y-4">
+                {/* Contraseña actual */}
+                <div className="space-y-2">
+                  <Label htmlFor="current-pass">Contraseña actual</Label>
+                  <div className="relative">
+                    <Input
+                      id="current-pass"
+                      type={showCurrent ? "text" : "password"}
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      disabled={savingPass}
+                      placeholder="Tu contraseña actual"
+                      required
+                      autoComplete="current-password"
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrent((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      tabIndex={-1}
+                    >
+                      {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Nueva contraseña */}
+                <div className="space-y-2">
+                  <Label htmlFor="new-pass">Nueva contraseña</Label>
+                  <div className="relative">
+                    <Input
+                      id="new-pass"
+                      type={showNew ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      disabled={savingPass}
+                      placeholder="Mínimo 6 caracteres"
+                      required
+                      autoComplete="new-password"
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNew((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      tabIndex={-1}
+                    >
+                      {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Confirmar */}
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-pass">Confirmar nueva contraseña</Label>
+                  <Input
+                    id="confirm-pass"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    disabled={savingPass}
+                    placeholder="Repite la nueva contraseña"
+                    required
+                    autoComplete="new-password"
+                  />
+                </div>
+
+                {passError && (
+                  <p className="text-sm text-destructive bg-destructive/10 rounded-md py-2 px-3">
+                    {passError}
                   </p>
                 )}
 
                 <div className="flex items-center gap-3">
-                  <Button type="submit" disabled={saving}>
-                    {saving ? (
-                      <><Loader2 className="w-4 h-4 animate-spin mr-2" />Guardando...</>
-                    ) : "Guardar apodo"}
+                  <Button type="submit" disabled={savingPass}>
+                    {savingPass
+                      ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Guardando...</>
+                      : "Cambiar contraseña"}
                   </Button>
-                  {saved && (
+                  {savedPass && (
                     <span className="flex items-center gap-1 text-sm text-primary">
-                      <CheckCircle className="w-4 h-4" />
-                      ¡Guardado!
+                      <CheckCircle className="w-4 h-4" />¡Contraseña actualizada!
                     </span>
                   )}
                 </div>

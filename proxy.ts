@@ -1,7 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
 
 // Rutas que NO requieren autenticación
-const PUBLIC_PATHS = ["/auth/login", "/api/auth/login"]
+const PUBLIC_PATHS = [
+  "/auth/login",
+  "/auth/olvide-contrasena",
+  "/api/auth/login",
+  "/api/auth/olvide-contrasena",
+]
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl

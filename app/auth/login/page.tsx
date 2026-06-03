@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, Suspense } from "react"
+import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -48,7 +49,7 @@ function LoginForm() {
             <Lock className="w-8 h-8 text-primary" />
           </div>
           <CardTitle className="font-serif text-2xl text-foreground">
-            GAIA Capoeira
+            Areia no Mar
           </CardTitle>
           <CardDescription className="text-muted-foreground">
             Ingresa tus credenciales para acceder al repositorio
@@ -110,6 +111,15 @@ function LoginForm() {
             >
               {loading ? "Entrando..." : "Entrar"}
             </Button>
+
+            <div className="text-center">
+              <Link
+                href="/auth/olvide-contrasena"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
           </form>
         </CardContent>
       </Card>

@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getSession } from "@/lib/auth/session"
-import { updateUser, deleteUser } from "@/lib/auth/db"
+import { updateUser, deleteUser, verifyUserPassword } from "@/lib/auth/db"
 
 type Params = { params: Promise<{ id: string }> }
 
-// PUT /api/users/[id] — actualizar usuario
-// Admin: puede cambiar cualquier campo de cualquier usuario
-// El propio usuario: solo puede cambiar su apodo
+// PUT /api/users/[id]
+// Admin  → puede cambiar cualquier campo de cualquier usuario (sin verificar contraseña actual)
+// Member → solo puede editar su propio perfil:
+//   - apodo: siempre
+//   - contraseña: si provee currentPassword correcto
 export async function PUT(request: NextRequest, { params }: Params) {
   const session = await getSession()
   if (!session.user) return NextResponse.json({ error: "No autenticado" }, { status: 401 })
@@ -22,20 +24,43 @@ export async function PUT(request: NextRequest, { params }: Params) {
   const body = await request.json()
 
   try {
-    // Miembros solo pueden editar su propio apodo
-    const updates = isAdmin
-      ? {
-          name:     body.name,
-          email:    body.email,
-          role:     body.role,
-          apodo:    body.apodo,
-          password: body.password || undefined,
+    let updates: Parameters<typeof updateUser>[1]
+
+    if (isAdmin) {
+      // Admin: actualización completa sin verificar contraseña actual
+      updates = {
+        name:     body.name,
+        email:    body.email,
+        role:     body.role,
+        apodo:    body.apodo,
+        password: body.password || undefined,
+      }
+    } else {
+      // Member: solo apodo y (opcionalmente) cambio de contraseña propio
+      updates = { apodo: body.apodo }
+
+      if (body.password) {
+        // Requiere la contraseña actual
+        if (!body.currentPassword) {
+          return NextResponse.json(
+            { error: "Debes ingresar tu contraseña actual para cambiarla" },
+            { status: 400 }
+          )
         }
-      : { apodo: body.apodo } // members: solo apodo
+        const valid = await verifyUserPassword(id, body.currentPassword)
+        if (!valid) {
+          return NextResponse.json(
+            { error: "La contraseña actual es incorrecta" },
+            { status: 400 }
+          )
+        }
+        updates.password = body.password
+      }
+    }
 
     const user = await updateUser(id, updates)
 
-    // Si el usuario editó su propio perfil, actualizar la sesión
+    // Actualizar sesión si el usuario editó su propio perfil
     if (isSelf) {
       session.user = { ...session.user, ...user }
       await session.save()
@@ -48,7 +73,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
   }
 }
 
-// DELETE /api/users/[id] — eliminar usuario (solo admin)
+// DELETE /api/users/[id] — solo admin
 export async function DELETE(_request: NextRequest, { params }: Params) {
   const session = await getSession()
   if (!session.user) return NextResponse.json({ error: "No autenticado" }, { status: 401 })
@@ -56,7 +81,6 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
 
   const { id } = await params
 
-  // No puede eliminarse a sí mismo
   if (session.user.id === id) {
     return NextResponse.json({ error: "No puedes eliminarte a ti mismo" }, { status: 400 })
   }

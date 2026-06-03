@@ -13,7 +13,19 @@ import {
   Loader2,
   ShieldCheck,
   User,
+  Shuffle,
+  Eye,
+  EyeOff,
+  Copy,
+  CheckCircle,
 } from "lucide-react"
+
+function generatePassword(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789"
+  const bytes = new Uint8Array(12)
+  crypto.getRandomValues(bytes)
+  return Array.from(bytes, (b) => chars[b % chars.length]).join("")
+}
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -72,6 +84,10 @@ export default function AdminUsuariosPage() {
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState("")
 
+  // Password UX
+  const [showPassword, setShowPassword] = useState(false)
+  const [copiedPassword, setCopiedPassword] = useState(false)
+
   // ── Redirigir si no es admin ────────────────────────────────────────
   useEffect(() => {
     if (!authLoading && (!user || user.role !== "admin")) {
@@ -104,6 +120,8 @@ export default function AdminUsuariosPage() {
     setEditingUser(null)
     setForm(EMPTY_FORM)
     setFormError("")
+    setShowPassword(false)
+    setCopiedPassword(false)
     setDialogOpen(true)
   }
 
@@ -119,6 +137,8 @@ export default function AdminUsuariosPage() {
       passwordConfirm: "",
     })
     setFormError("")
+    setShowPassword(false)
+    setCopiedPassword(false)
     setDialogOpen(true)
   }
 
@@ -402,18 +422,75 @@ export default function AdminUsuariosPage() {
 
             {/* Contraseña */}
             <div className="space-y-2">
-              <Label htmlFor="password">
-                Contraseña {editingUser ? "(dejar en blanco para no cambiar)" : "*"}
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                value={form.password}
-                onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-                disabled={saving}
-                placeholder="Mínimo 6 caracteres"
-                required={!editingUser}
-              />
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">
+                  Contraseña {editingUser ? "(dejar en blanco para no cambiar)" : "*"}
+                </Label>
+                <button
+                  type="button"
+                  disabled={saving}
+                  onClick={() => {
+                    const p = generatePassword()
+                    setForm((f) => ({ ...f, password: p, passwordConfirm: p }))
+                    setShowPassword(true)
+                    setCopiedPassword(false)
+                  }}
+                  className="flex items-center gap-1.5 text-xs text-primary hover:text-primary/80 transition-colors font-medium"
+                >
+                  <Shuffle className="w-3.5 h-3.5" />
+                  Generar aleatoria
+                </button>
+              </div>
+
+              {/* Input + show/hide + copy */}
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={form.password}
+                    onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+                    disabled={saving}
+                    placeholder="Mínimo 6 caracteres"
+                    required={!editingUser}
+                    className="pr-10"
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+
+                {/* Copiar — solo si hay contraseña */}
+                {form.password && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await navigator.clipboard.writeText(form.password)
+                      setCopiedPassword(true)
+                      setTimeout(() => setCopiedPassword(false), 2000)
+                    }}
+                    className="px-3 rounded-md border border-border text-muted-foreground hover:text-primary hover:border-primary transition-colors"
+                    title="Copiar contraseña"
+                  >
+                    {copiedPassword
+                      ? <CheckCircle className="w-4 h-4 text-primary" />
+                      : <Copy className="w-4 h-4" />}
+                  </button>
+                )}
+              </div>
+
+              {/* Contraseña generada — destacar para que admin la vea */}
+              {form.password && showPassword && (
+                <p className="text-xs text-muted-foreground">
+                  Copia y comparte esta contraseña con el usuario antes de cerrar.
+                </p>
+              )}
             </div>
 
             {form.password && (
@@ -428,6 +505,7 @@ export default function AdminUsuariosPage() {
                   }
                   disabled={saving}
                   placeholder="Repite la contraseña"
+                  autoComplete="new-password"
                 />
               </div>
             )}

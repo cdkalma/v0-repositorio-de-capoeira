@@ -142,3 +142,50 @@ export async function deleteUser(id: string): Promise<void> {
   const { error } = await supabase.from("usuarios").delete().eq("id", id)
   if (error) throw new Error(error.message)
 }
+
+// ── Verificar contraseña actual de un usuario ────────────────────────
+export async function verifyUserPassword(userId: string, password: string): Promise<boolean> {
+  const supabase = createAdminClient()
+  const { data } = await supabase
+    .from("usuarios")
+    .select("password_hash")
+    .eq("id", userId)
+    .single()
+
+  if (!data) return false
+  return bcrypt.compare(password, (data as { password_hash: string }).password_hash)
+}
+
+// ── Resetear contraseña por username + email (olvidé contraseña) ─────
+// Genera una contraseña temporal, la guarda hasheada y la devuelve en claro.
+export async function resetPasswordByCredentials(
+  username: string,
+  email: string
+): Promise<string | null> {
+  const supabase = createAdminClient()
+
+  // Buscar usuario con username Y email coincidentes
+  const { data } = await supabase
+    .from("usuarios")
+    .select("id")
+    .eq("username", username.trim().toLowerCase())
+    .eq("email", email.trim().toLowerCase())
+    .single()
+
+  if (!data) return null
+
+  // Generar contraseña temporal legible (sin caracteres confusos)
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789"
+  const { randomBytes } = await import("crypto")
+  const bytes = randomBytes(10)
+  const tempPassword = Array.from(bytes, (b) => chars[b % chars.length]).join("")
+
+  const password_hash = await bcrypt.hash(tempPassword, 10)
+  const { error } = await supabase
+    .from("usuarios")
+    .update({ password_hash, updated_at: new Date().toISOString() })
+    .eq("id", (data as { id: string }).id)
+
+  if (error) return null
+  return tempPassword
+}
