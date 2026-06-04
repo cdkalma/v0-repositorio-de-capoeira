@@ -15,6 +15,7 @@ import {
   Calendar,
   X,
   Trash2,
+  RefreshCw,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -97,6 +98,10 @@ export default function GaleraContent() {
   const [rodaSaving, setRodaSaving] = useState(false)
   const [rodaFormError, setRodaFormError] = useState("")
 
+  // ── YouTube sync state ───────────────────────────────────────────
+  const [syncing, setSyncing] = useState(false)
+  const [syncMsg, setSyncMsg] = useState("")
+
   // ── Cantorias state ──────────────────────────────────────────────
   const [cantorias, setCantorias] = useState<Cantoria[]>([])
   const [cantoriasLoading, setCantoriasLoading] = useState(true)
@@ -150,6 +155,29 @@ export default function GaleraContent() {
   }, [rodas, jogadorQuery])
 
   const groupedRodas = useMemo(() => groupByMonth(filteredRodas), [filteredRodas])
+
+  // ── YouTube sync handler ─────────────────────────────────────────
+  const handleSync = async () => {
+    setSyncing(true)
+    setSyncMsg("")
+    try {
+      const res = await fetch("/api/rodas/sync", { method: "POST" })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? "Error al sincronizar")
+      await fetchRodas()
+      setSyncMsg(
+        data.inserted > 0
+          ? `${data.inserted} roda${data.inserted !== 1 ? "s" : ""} importada${data.inserted !== 1 ? "s" : ""}`
+          : "Todo al día ✓"
+      )
+      setTimeout(() => setSyncMsg(""), 4000)
+    } catch (err: unknown) {
+      setSyncMsg(err instanceof Error ? err.message : "Error al sincronizar")
+      setTimeout(() => setSyncMsg(""), 6000)
+    } finally {
+      setSyncing(false)
+    }
+  }
 
   // ── Roda handlers ────────────────────────────────────────────────
   const handleSaveRoda = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -304,23 +332,50 @@ export default function GaleraContent() {
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 ml-auto">
+                <div className="flex items-center gap-2 ml-auto flex-wrap">
                   {jogadorQuery && (
                     <span className="text-sm text-muted-foreground">
                       {filteredRodas.length} resultado{filteredRodas.length !== 1 ? "s" : ""}
                     </span>
                   )}
                   {isAdmin && (
-                    <Button
-                      onClick={() => { setRodaForm(EMPTY_RODA); setRodaFormError(""); setRodaDialogOpen(true) }}
-                      className="gap-2 shrink-0"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Agregar roda
-                    </Button>
+                    <>
+                      {/* Sync con YouTube */}
+                      <Button
+                        variant="outline"
+                        onClick={handleSync}
+                        disabled={syncing}
+                        className="gap-2 shrink-0"
+                        title="Importar nuevos videos desde la playlist de YouTube"
+                      >
+                        {syncing
+                          ? <Loader2 className="w-4 h-4 animate-spin" />
+                          : <RefreshCw className="w-4 h-4" />}
+                        {syncing ? "Sincronizando..." : "Sync YouTube"}
+                      </Button>
+
+                      <Button
+                        onClick={() => { setRodaForm(EMPTY_RODA); setRodaFormError(""); setRodaDialogOpen(true) }}
+                        className="gap-2 shrink-0"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Agregar roda
+                      </Button>
+                    </>
                   )}
                 </div>
               </div>
+
+              {/* Sync result message */}
+              {syncMsg && (
+                <p className={`text-sm mb-4 px-3 py-2 rounded-lg ${
+                  syncMsg.includes("Error") || syncMsg.includes("error")
+                    ? "bg-destructive/10 text-destructive"
+                    : "bg-primary/10 text-primary"
+                }`}>
+                  {syncMsg}
+                </p>
+              )}
 
               {/* States */}
               {rodasLoading && (

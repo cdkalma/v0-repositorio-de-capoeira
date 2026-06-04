@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/rodas/sync-cron",
+      "schedule": "0 10 * * 1"
+    }
+  ]
+}
