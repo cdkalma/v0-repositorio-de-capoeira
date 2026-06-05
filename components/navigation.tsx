@@ -24,7 +24,7 @@ function CordaAvatar({ src, size }: { src: string | null; size: "sm" | "md" }) {
       <User className={`${iconSize} text-primary-foreground`} />
     </div>
   )
-  return <img src={src} alt="Cuerda" className={`${dim} rounded-full object-cover bg-white shrink-0`} />
+  return <img src={src} alt="Cuerda" className={`${dim} object-contain drop-shadow shrink-0`} />
 }
 
 const navItems = [
