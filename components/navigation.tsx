@@ -6,6 +6,7 @@ import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Menu, X, Play, ScrollText, Music, LogIn, LogOut, User, Users, ShieldCheck } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
+import { getCordaSrc } from "@/lib/constants/cordas"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -14,6 +15,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+
+function CordaAvatar({ src, size }: { src: string | null; size: "sm" | "md" }) {
+  const dim = size === "sm" ? "w-6 h-6" : "w-8 h-8"
+  const iconSize = size === "sm" ? "w-3 h-3" : "w-4 h-4"
+  if (!src) return (
+    <div className={`${dim} rounded-full bg-primary flex items-center justify-center shrink-0`}>
+      <User className={`${iconSize} text-primary-foreground`} />
+    </div>
+  )
+  return <img src={src} alt="Cuerda" className={`${dim} rounded-full object-cover bg-white shrink-0`} />
+}
 
 const navItems = [
   { href: "/galera", label: "Galera", icon: Play },
@@ -68,9 +80,7 @@ export function Navigation() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="ml-2 gap-2">
-                        <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
-                          <User className="w-3 h-3 text-primary-foreground" />
-                        </div>
+                        <CordaAvatar src={getCordaSrc(user.avatar)} size="sm" />
                         <span className="max-w-24 truncate">
                           {user.name || user.username}
                         </span>
@@ -154,9 +164,7 @@ export function Navigation() {
                   {user ? (
                     <>
                       <div className="flex items-center gap-3 px-4 py-2 text-foreground">
-                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                          <User className="w-4 h-4 text-primary-foreground" />
-                        </div>
+                        <CordaAvatar src={getCordaSrc(user.avatar)} size="md" />
                         <span className="font-medium">
                           {user.name || user.username}
                         </span>

@@ -16,6 +16,7 @@ interface UsuarioRow {
   email: string | null
   role: "admin" | "member"
   apodo: string | null
+  avatar: string | null
 }
 
 function rowToUser(row: UsuarioRow): AppUser {
@@ -26,6 +27,7 @@ function rowToUser(row: UsuarioRow): AppUser {
     email: row.email,
     role: row.role,
     apodo: row.apodo,
+    avatar: row.avatar ?? null,
   }
 }
 
@@ -54,7 +56,7 @@ export async function getAllUsers(): Promise<AppUser[]> {
   const supabase = createAdminClient()
   const { data, error } = await supabase
     .from("usuarios")
-    .select("id, username, name, email, role, apodo, created_at")
+    .select("id, username, name, email, role, apodo, avatar, created_at")
     .order("created_at", { ascending: true })
 
   if (error || !data) return []
@@ -67,7 +69,7 @@ export async function getUserById(id: string): Promise<AppUser | null> {
   const supabase = createAdminClient()
   const { data, error } = await supabase
     .from("usuarios")
-    .select("id, username, name, email, role, apodo")
+    .select("id, username, name, email, role, apodo, avatar")
     .eq("id", id)
     .single()
 
@@ -97,7 +99,7 @@ export async function createUser(params: {
       role: params.role,
       apodo: params.apodo || null,
     })
-    .select("id, username, name, email, role, apodo")
+    .select("id, username, name, email, role, apodo, avatar")
     .single()
 
   if (error) throw new Error(error.message)
@@ -112,6 +114,7 @@ export async function updateUser(
     email?: string | null
     role?: "admin" | "member"
     apodo?: string | null
+    avatar?: string | null
     password?: string // opcional: si viene, se hashea
   }
 ): Promise<AppUser> {
@@ -123,13 +126,14 @@ export async function updateUser(
   if (params.email    !== undefined) updates.email   = params.email
   if (params.role     !== undefined) updates.role    = params.role
   if (params.apodo    !== undefined) updates.apodo   = params.apodo
+  if (params.avatar   !== undefined) updates.avatar  = params.avatar
   if (params.password)               updates.password_hash = await bcrypt.hash(params.password, 10)
 
   const { data, error } = await supabase
     .from("usuarios")
     .update(updates)
     .eq("id", id)
-    .select("id, username, name, email, role, apodo")
+    .select("id, username, name, email, role, apodo, avatar")
     .single()
 
   if (error) throw new Error(error.message)

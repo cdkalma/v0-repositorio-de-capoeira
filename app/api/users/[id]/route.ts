@@ -33,11 +33,15 @@ export async function PUT(request: NextRequest, { params }: Params) {
         email:    body.email,
         role:     body.role,
         apodo:    body.apodo,
+        avatar:   body.avatar !== undefined ? body.avatar : undefined,
         password: body.password || undefined,
       }
     } else {
-      // Member: solo apodo y (opcionalmente) cambio de contraseña propio
-      updates = { apodo: body.apodo }
+      // Member: solo apodo, avatar y (opcionalmente) cambio de contraseña propio
+      updates = {
+        apodo:  body.apodo,
+        avatar: body.avatar !== undefined ? body.avatar : undefined,
+      }
 
       if (body.password) {
         // Requiere la contraseña actual

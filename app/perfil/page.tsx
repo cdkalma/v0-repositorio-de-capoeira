@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { User, Award, Loader2, CheckCircle, Eye, EyeOff } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { CORDAS, getCordaSrc } from "@/lib/constants/cordas"
 
 const ROLE_LABELS: Record<string, string> = {
   admin:  "Administrador",
@@ -26,6 +27,11 @@ export default function PerfilPage() {
   const [savedApodo, setSavedApodo] = useState(false)
   const [apodoError, setApodoError] = useState("")
 
+  // ── Avatar (cuerda) ────────────────────────────────────────────────
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null)
+  const [avatarSaved, setAvatarSaved] = useState(false)
+  const [avatarError, setAvatarError] = useState("")
+
   // ── Contraseña ─────────────────────────────────────────────────────
   const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
@@ -38,8 +44,31 @@ export default function PerfilPage() {
 
   useEffect(() => {
     if (!loading && !user) router.push("/auth/login")
-    if (user) setApodo(user.apodo ?? "")
+    if (user) {
+      setApodo(user.apodo ?? "")
+      setSelectedAvatar(user.avatar ?? null)
+    }
   }, [user, loading, router])
+
+  // ── Seleccionar avatar ─────────────────────────────────────────────
+  const handleSelectAvatar = async (id: string) => {
+    if (!user) return
+    setSelectedAvatar(id)
+    setAvatarSaved(false)
+    setAvatarError("")
+    const res = await fetch(`/api/users/${user.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ avatar: id }),
+    })
+    if (res.ok) {
+      setAvatarSaved(true)
+      setTimeout(() => setAvatarSaved(false), 3000)
+    } else {
+      setAvatarError("Error al guardar")
+      setTimeout(() => setAvatarError(""), 3000)
+    }
+  }
 
   // ── Guardar apodo ──────────────────────────────────────────────────
   const handleSaveApodo = async (e: React.FormEvent) => {
@@ -125,9 +154,12 @@ export default function PerfilPage() {
           <Card className="border-border bg-card">
             <CardHeader className="text-center border-b border-border pb-6">
               <div className="mx-auto mb-4">
-                <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center">
-                  <User className="w-12 h-12 text-primary-foreground" />
-                </div>
+                {selectedAvatar
+                  ? <img src={getCordaSrc(selectedAvatar)!} alt="Tu cuerda" className="w-24 h-24 rounded-full object-cover bg-white" />
+                  : <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center">
+                      <User className="w-12 h-12 text-primary-foreground" />
+                    </div>
+                }
               </div>
               <CardTitle className="font-serif text-2xl text-foreground">
                 {user.name}
@@ -158,6 +190,46 @@ export default function PerfilPage() {
                   </div>
                 )}
               </div>
+            </CardContent>
+          </Card>
+
+          {/* ── Elegir cuerda ── */}
+          <Card className="border-border bg-card">
+            <CardHeader className="border-b border-border pb-4">
+              <CardTitle className="font-serif text-lg text-foreground">Tu cuerda</CardTitle>
+              <p className="text-sm text-muted-foreground">Elige la cuerda que te identifica.</p>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="grid grid-cols-6 sm:grid-cols-8 gap-2">
+                {CORDAS.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => handleSelectAvatar(c.id)}
+                    title={c.label}
+                    className={`rounded-full overflow-hidden border-2 transition-all focus:outline-none ${
+                      selectedAvatar === c.id
+                        ? "border-primary ring-2 ring-primary ring-offset-2 scale-110"
+                        : "border-transparent hover:border-primary/40"
+                    }`}
+                  >
+                    <img
+                      src={`/cordas/${c.id}.png`}
+                      alt={c.label}
+                      className="w-full aspect-square object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+              {avatarSaved && (
+                <p className="text-sm text-primary mt-4 text-center flex items-center justify-center gap-1">
+                  <CheckCircle className="w-4 h-4" /> ¡Cuerda guardada!
+                </p>
+              )}
+              {avatarError && (
+                <p className="text-sm text-destructive bg-destructive/10 rounded-md py-2 px-3 mt-4 text-center">
+                  {avatarError}
+                </p>
+              )}
             </CardContent>
           </Card>
 

@@ -11,4 +11,5 @@ export interface AppUser {
   email: string | null
   role: "admin" | "member"
   apodo: string | null
+  avatar: string | null
 }
