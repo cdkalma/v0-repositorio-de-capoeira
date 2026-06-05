@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 function CordaAvatar({ src, size }: { src: string | null; size: "sm" | "md" }) {
-  const dim = size === "sm" ? "w-4 h-4" : "w-8 h-8"
-  const iconSize = size === "sm" ? "w-3 h-3" : "w-4 h-4"
+  const dim = size === "sm" ? "w-7 h-7" : "w-10 h-10"
+  const iconSize = size === "sm" ? "w-4 h-4" : "w-5 h-5"
   if (!src) return (
     <div className={`${dim} rounded-full bg-primary flex items-center justify-center shrink-0`}>
       <User className={`${iconSize} text-primary-foreground`} />
