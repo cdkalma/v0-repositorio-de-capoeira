@@ -155,9 +155,9 @@ export default function PerfilPage() {
             <CardHeader className="text-center border-b border-border pb-6">
               <div className="flex justify-center mb-4">
                 {selectedAvatar
-                  ? <img src={getCordaSrc(selectedAvatar)!} alt="Tu cuerda" className="w-32 h-32 rounded-full object-cover bg-white" />
-                  : <div className="w-32 h-32 rounded-full bg-primary flex items-center justify-center">
-                      <User className="w-16 h-16 text-primary-foreground" />
+                  ? <img src={getCordaSrc(selectedAvatar)!} alt="Tu cuerda" className="w-28 h-28 object-contain drop-shadow-lg" />
+                  : <div className="w-28 h-28 flex items-center justify-center">
+                      <User className="w-16 h-16 text-muted-foreground" />
                     </div>
                 }
               </div>
