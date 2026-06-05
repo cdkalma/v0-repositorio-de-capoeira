@@ -213,7 +213,7 @@ export default function PerfilPage() {
                     }`}
                   >
                     <img
-                      src={`/cordas/${c.id}.png`}
+                      src={`/Cuerda x cuerda/${c.id}.png`}
                       alt={c.label}
                       className="w-full aspect-square object-cover"
                     />
