@@ -10,18 +10,18 @@ const sections = [
     color: "bg-primary",
   },
   {
-    href: "/politica",
-    title: "Política",
-    description: "Manual de convivencia, cordas de graduación y documentos del grupo",
-    icon: ScrollText,
-    color: "bg-chart-4",
-  },
-  {
     href: "/canciones",
     title: "Sabiá cantou",
     description: "Cancionero para que no pares de cantar en la roda",
     icon: Music,
     color: "bg-chart-5",
+  },
+  {
+    href: "/politica",
+    title: "Política",
+    description: "Manual de convivencia, cordas de graduación y documentos del grupo",
+    icon: ScrollText,
+    color: "bg-chart-4",
   },
 ]
 
@@ -67,6 +67,7 @@ export function Hero() {
             >
               Política
             </Link>
+
           </div>
         </div>
       </div>

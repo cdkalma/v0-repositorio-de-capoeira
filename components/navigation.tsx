@@ -29,8 +29,8 @@ function CordaAvatar({ src, size }: { src: string | null; size: "sm" | "md" }) {
 
 const navItems = [
   { href: "/galera", label: "Galera", icon: Play },
-  { href: "/politica", label: "Política", icon: ScrollText },
   { href: "/canciones", label: "Sabiá cantou", icon: Music },
+  { href: "/politica", label: "Política", icon: ScrollText },
 ]
 
 export function Navigation() {
