@@ -443,18 +443,40 @@ export default function GaleraContent() {
           {/* ── TAB: CANTORIAS ─────────────────────────────────────── */}
           {activeTab === "cantorias" && (
             <div>
-              {/* Add button */}
+              {/* Toolbar */}
               {isAdmin && (
-                <div className="flex justify-end mb-8">
-                  <Button
-                    onClick={() => { setCantoriaForm(EMPTY_CANTORIA); setCantoriaFormError(""); setCantoriaDialogOpen(true) }}
-                    size="lg"
-                    className="gap-2"
-                  >
-                    <Plus className="w-5 h-5" />
-                    Agregar cantoria
-                  </Button>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-8">
+                  <div className="flex items-center gap-2 ml-auto flex-wrap">
+                    <Button
+                      variant="outline"
+                      onClick={handleSync}
+                      disabled={syncing}
+                      className="gap-2 shrink-0"
+                      title="Importar nuevos videos desde la playlist de YouTube"
+                    >
+                      {syncing
+                        ? <Loader2 className="w-4 h-4 animate-spin" />
+                        : <RefreshCw className="w-4 h-4" />}
+                      {syncing ? "Sincronizando..." : "Sync YouTube"}
+                    </Button>
+                    <Button
+                      onClick={() => { setCantoriaForm(EMPTY_CANTORIA); setCantoriaFormError(""); setCantoriaDialogOpen(true) }}
+                      className="gap-2 shrink-0"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Agregar cantoria
+                    </Button>
+                  </div>
                 </div>
+              )}
+              {syncMsg && activeTab === "cantorias" && (
+                <p className={`text-sm mb-4 px-3 py-2 rounded-lg ${
+                  syncMsg.includes("Error") || syncMsg.includes("error")
+                    ? "bg-destructive/10 text-destructive"
+                    : "bg-primary/10 text-primary"
+                }`}>
+                  {syncMsg}
+                </p>
               )}
 
               {/* States */}

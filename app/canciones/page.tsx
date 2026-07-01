@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { SectionLayout } from "@/components/section-layout"
 import { SongCard } from "@/components/song-card"
-import { Music, Filter, Plus, Loader2 } from "lucide-react"
+import { Music, Filter, Plus, Loader2, Search, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
 import {
@@ -79,6 +79,7 @@ export default function CancionesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [selectedType, setSelectedType] = useState("all")
+  const [searchQuery, setSearchQuery] = useState("")
 
   // Dialog
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -182,8 +183,12 @@ export default function CancionesPage() {
   }
 
   // ── Filter ────────────────────────────────────────────────────────
-  const filteredSongs =
-    selectedType === "all" ? songs : songs.filter((s) => s.type === selectedType)
+  const filteredSongs = songs.filter((s) => {
+    const matchesType = selectedType === "all" || s.type === selectedType
+    const q = searchQuery.trim().toLowerCase()
+    const matchesSearch = !q || s.title.toLowerCase().includes(q) || s.lyrics.toLowerCase().includes(q)
+    return matchesType && matchesSearch
+  })
 
   return (
     <SectionLayout
@@ -216,7 +221,33 @@ export default function CancionesPage() {
         </div>
       </div>
 
-      {/* Filter + Add button */}
+      {/* Search + Add */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Buscar por título o letra..."
+            className="pl-9 pr-8"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              aria-label="Limpiar búsqueda"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+        <Button onClick={openAdd} className="shrink-0 gap-2">
+          <Plus className="w-4 h-4" />
+          Nueva canción
+        </Button>
+      </div>
+
+      {/* Filter by type */}
       <div className="flex items-center gap-3 mb-8 flex-wrap">
         <Filter className="w-5 h-5 text-muted-foreground shrink-0" />
         <div className="flex gap-2 overflow-x-auto pb-1 flex-1">
@@ -234,11 +265,11 @@ export default function CancionesPage() {
             </button>
           ))}
         </div>
-        {/* Cualquier usuario autenticado puede agregar canciones */}
-        <Button onClick={openAdd} className="shrink-0 gap-2">
-          <Plus className="w-4 h-4" />
-          Nueva canción
-        </Button>
+        {searchQuery && (
+          <span className="text-sm text-muted-foreground shrink-0">
+            {filteredSongs.length} resultado{filteredSongs.length !== 1 ? "s" : ""}
+          </span>
+        )}
       </div>
 
       {/* States */}
