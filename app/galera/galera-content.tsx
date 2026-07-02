@@ -101,6 +101,8 @@ export default function GaleraContent() {
   // ── YouTube sync state ───────────────────────────────────────────
   const [syncing, setSyncing] = useState(false)
   const [syncMsg, setSyncMsg] = useState("")
+  const [cantoriaSyncing, setCantoriaSyncing] = useState(false)
+  const [cantoriaSyncMsg, setCantoriaSyncMsg] = useState("")
 
   // ── Cantorias state ──────────────────────────────────────────────
   const [cantorias, setCantorias] = useState<Cantoria[]>([])
@@ -176,6 +178,29 @@ export default function GaleraContent() {
       setTimeout(() => setSyncMsg(""), 6000)
     } finally {
       setSyncing(false)
+    }
+  }
+
+  // ── Cantorias YouTube sync ───────────────────────────────────────
+  const handleSyncCantorias = async () => {
+    setCantoriaSyncing(true)
+    setCantoriaSyncMsg("")
+    try {
+      const res = await fetch("/api/cantorias/sync", { method: "POST" })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? "Error al sincronizar")
+      await fetchCantorias()
+      setCantoriaSyncMsg(
+        data.inserted > 0
+          ? `${data.inserted} cantoria${data.inserted !== 1 ? "s" : ""} importada${data.inserted !== 1 ? "s" : ""}`
+          : "Todo al día ✓"
+      )
+      setTimeout(() => setCantoriaSyncMsg(""), 4000)
+    } catch (err: unknown) {
+      setCantoriaSyncMsg(err instanceof Error ? err.message : "Error al sincronizar")
+      setTimeout(() => setCantoriaSyncMsg(""), 6000)
+    } finally {
+      setCantoriaSyncing(false)
     }
   }
 
@@ -449,15 +474,15 @@ export default function GaleraContent() {
                   <div className="flex items-center gap-2 ml-auto flex-wrap">
                     <Button
                       variant="outline"
-                      onClick={handleSync}
-                      disabled={syncing}
+                      onClick={handleSyncCantorias}
+                      disabled={cantoriaSyncing}
                       className="gap-2 shrink-0"
-                      title="Importar nuevos videos desde la playlist de YouTube"
+                      title="Importar nuevos videos desde la playlist de cantorias en YouTube"
                     >
-                      {syncing
+                      {cantoriaSyncing
                         ? <Loader2 className="w-4 h-4 animate-spin" />
                         : <RefreshCw className="w-4 h-4" />}
-                      {syncing ? "Sincronizando..." : "Sync YouTube"}
+                      {cantoriaSyncing ? "Sincronizando..." : "Sync YouTube"}
                     </Button>
                     <Button
                       onClick={() => { setCantoriaForm(EMPTY_CANTORIA); setCantoriaFormError(""); setCantoriaDialogOpen(true) }}
@@ -469,13 +494,13 @@ export default function GaleraContent() {
                   </div>
                 </div>
               )}
-              {syncMsg && activeTab === "cantorias" && (
+              {cantoriaSyncMsg && (
                 <p className={`text-sm mb-4 px-3 py-2 rounded-lg ${
-                  syncMsg.includes("Error") || syncMsg.includes("error")
+                  cantoriaSyncMsg.includes("Error") || cantoriaSyncMsg.includes("error")
                     ? "bg-destructive/10 text-destructive"
                     : "bg-primary/10 text-primary"
                 }`}>
-                  {syncMsg}
+                  {cantoriaSyncMsg}
                 </p>
               )}
 
